@@ -2,7 +2,7 @@
     <div>
         <p>Products home page here</p>
         <div v-for="p in product" :key="p.id">
-            <NuxtLink :to = '`/pproduct/{p.id}`' > {{ p.title}} </NuxtLink>
+           <productCard :product = 'p' />
         </div> 
     </div>
 
