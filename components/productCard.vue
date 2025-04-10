@@ -1,9 +1,9 @@
 <template>
     <div>
-        <img :src="product.image"/>
+        <img :src="product.image" alt="product img"/>
         <p class="truncate">{{ product. title }}</p>
-        <p>{{ product.price }}</p>
-        <p>{{ product. description }}</p>
+        <p>Price - ${{ product.price }}</p>
+        <p>Product Description - {{ product. description }}</p>
     <NuxtLink :to = '`/products/${product.id}`' > ViewDetails </NuxtLink>
     </div>
 </template>
