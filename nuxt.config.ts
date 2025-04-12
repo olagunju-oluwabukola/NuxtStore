@@ -10,4 +10,17 @@ export default defineNuxtConfig({
       tailwindcss(),
     ],
   },
+  app:{
+    head:{
+      title: 'Nuxt-product',
+      meta:[
+        {name:'product', content: 'nuxt tutorial'}
+
+      ],
+      link: [
+        {rel:'stylesheet', href:'icon link here'}
+      ]
+    },
+
+  }
 })

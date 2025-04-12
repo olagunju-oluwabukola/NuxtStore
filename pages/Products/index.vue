@@ -13,5 +13,12 @@ definePageMeta({
     layout:'products'
 })
 
+useHead({
+    title:'prooduct page ',
+    meta:[
+        { content: 'overifing meta tag'}
+    ],
+    link:[]
+})
 const { data: product } = await useFetch('https://fakestoreapi.com/products')
 </script>
