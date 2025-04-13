@@ -1,6 +1,7 @@
 <template>
     <div>
         <p>Products decription here</p>
+        <p>{{ data }}</p>
     </div>
 
 </template>
@@ -9,4 +10,6 @@
 definePageMeta({
 layout:'products'
 })
+
+const {data} = useFetch('/api/product')
 </script>
