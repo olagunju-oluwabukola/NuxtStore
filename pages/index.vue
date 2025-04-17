@@ -1,6 +1,23 @@
 <template>
     <div>
-        <h3 class="text-red-900">Home</h3>
-        <p class="text-blue-500">This is the home page.</p>
-    </div>
+     <HomeHero/>
+
+        </div>
 </template>
+
+
+<!-- <script setup>
+const data = [
+    {
+    name:'ola',
+    email:'ola333',
+    id:1
+    },
+    {
+        name:"nana",
+        email:'mmmmm',
+        id:2
+    }
+]
+    
+</script> -->
