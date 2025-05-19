@@ -49,6 +49,3 @@ const handleCategoryClick = (categoryName) => {
 }
 </script>
 
-<style>
-/* You can add any custom styles here if needed */
-</style>

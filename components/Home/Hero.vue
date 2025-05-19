@@ -61,5 +61,6 @@
     </section>
 
     <HomeCard/>
+    <HomeBestSeller/>
   </template>
   
