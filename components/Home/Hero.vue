@@ -6,7 +6,6 @@
         <p class="uppercase text-green-600 tracking-wide font-semibold text-sm md:text-base">
           Welcome to Nuxt Store
         </p>
-  
         <h1 class="text-3xl
          md:text-6xl font-extrabold text-green-800 leading-tight">
           Are you ready to <br />
@@ -15,7 +14,7 @@
   
         <p class="text-green-700 text-sm 
         mt-6 md:mt-0
-        md:text-base  md:leading-relaxed font-medium  max-w-xl mx-auto">
+        md:text-base  md:leading-relaxed font-medium  max-w-xl ">
 
           Discover affordable, modern, and quality items — designed to elevate your lifestyle.
         </p>
@@ -59,8 +58,15 @@
         </div>
       </div>
     </section>
-
     <HomeCard/>
+    <HomeWhyUs/>
     <HomeBestSeller/>
+    <HomeDiscountForm/>
+    <div class='text-gray-200'>
+      <hr/>
+    </div>
+   
+   
+
   </template>
   

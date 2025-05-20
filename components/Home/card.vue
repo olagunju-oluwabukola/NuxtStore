@@ -1,7 +1,7 @@
 <template>
-  <section class="container mx-auto px-4 py-12">
+  <section class="container mx-auto md:mx-10 px-4 py-10">
     <h2 class=" mb-12 text-2xl md:text-3xl font-semibold text-gray-900">Shop by Category</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
       <HomeCategoryCard 
         v-for="category in categories"
         :key="category.slug"
