@@ -59,7 +59,7 @@
       </div>
     </section>
     <HomeCard/>
-    <HomeWhyUs/>
+    <!-- <HomeWhyUs/> -->
     <HomeBestSeller/>
     <HomeDiscountForm/>
     <div class='text-gray-200'>

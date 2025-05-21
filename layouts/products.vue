@@ -2,7 +2,7 @@
 <template>
     <div>
       
-      <ProductNav/>
+      <AppHeader/>
       <slot />
       <AppFooter />
     </div>
