@@ -1,11 +1,13 @@
 <script setup>
 import { useCartStore } from '@/stores/cart'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
 const cart = useCartStore()
-
 const router = useRouter()
+const showModal = ref(false)
 
-function checkout() {
-  alert(`Payment successful! Total: $${cart.total.toFixed(2)}`)
+function handlePaid() {
   cart.clearCart()
   router.push('/products')
 }
@@ -17,6 +19,11 @@ function checkout() {
 
     <div v-if="cart.items.length === 0" class="text-gray-600">
       Your cart is empty.
+      <div>
+        <NuxtLink to="/products" class="text-green-400 hover:underline">
+          Click here to add products
+        </NuxtLink>
+      </div>
     </div>
 
     <div v-else>
@@ -44,7 +51,7 @@ function checkout() {
       <div class="mt-8 flex justify-between items-center border-t pt-4">
         <p class="text-xl font-bold">Total: ${{ cart.total.toFixed(2) }}</p>
         <button
-          @click="checkout"
+          @click="showModal = true"
           class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded"
         >
           Checkout
@@ -52,5 +59,11 @@ function checkout() {
       </div>
     </div>
   </div>
-</template> 
 
+  <DcartCheckoutModal
+    v-if="showModal"
+    :total="cart.total"
+    @close="showModal = false"
+    @paid="handlePaid"
+  />
+</template>

@@ -7,7 +7,7 @@ import { createError, definePageMeta, useFetch } from '#imports'
 const route = useRoute()
 const id = route.params.id
 const router = useRouter()
-
+const navBack = () => router.back()
 const { data: product } = await useFetch(`https://fakestoreapi.com/products/${id}`)
 
 if (!product.value) {
@@ -50,12 +50,14 @@ function addToCart() {
     <title>{{ product.title }}</title>
     <meta name="description" :content="product.description" />
   </Head>
-
+  <div>
+    <button @click="navBack" class="cursor-pointer text-green-400 my-5 md:my-8 lg:my-10 mx-5 md:mx-10 lg:mx-10 font-semiBold text-lg"> << Previous </button>
+  </div>
   <div
     v-if="product"
     class="max-w-5xl mx-auto px-4 py-10 grid md:grid-cols-2 gap-10 items-start"
   >
-    <!-- Product Image -->
+   
     <div class="w-full h-full flex justify-center">
       <img
         :src="product.image"
@@ -91,7 +93,7 @@ function addToCart() {
 
       <button
         @click="addToCart"
-        class="bg-green-400  text-white px-6 py-3 rounded-lg transition"
+        class="bg-green-400 cursor-pointer text-white px-6 py-3 rounded-lg transition"
       >
         Add to Cart 
       </button>

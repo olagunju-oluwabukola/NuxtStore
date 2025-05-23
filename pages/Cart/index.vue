@@ -1,4 +1,5 @@
 <script setup>
+import { useRoute, useRouter } from 'vue-router'
 definePageMeta({
     layout:'products'
 })
@@ -10,13 +11,18 @@ useHead({
     ],
     link:[]
 })
+const router = useRouter()  
+const navBack  = () => router.back()
 </script>
 
 <template>
-    <div>
-        <div class="mx-auto text-center text-3xl md:text-5xl lg:text-6xl font-bold my-4 md:m-8 lg:my-10"> 
-            Products
-        </div>
+     <div>
+    <button @click="navBack" class="text-green-400 my-5 md:my-8 lg:my-10 mx-5 md:mx-10 lg:mx-10 font-semiBold text-lg cursor-pointer"> << Previous </button>
+  </div>
+    <div >
+
+       
+        
     </div>
 
     <div class="mx-auto md:mx-10 px-4 py-10">
