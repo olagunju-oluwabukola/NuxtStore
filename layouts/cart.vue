@@ -1,7 +1,7 @@
 
 <template>
     <div>
-      <AppHeader/>
+      <CartHeader/>
       <slot />
       <AppFooter />
     </div>

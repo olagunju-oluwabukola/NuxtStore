@@ -1,18 +1,3 @@
-<script setup>
-import { useCartStore } from '@/stores/cart'
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-
-const cart = useCartStore()
-const router = useRouter()
-const showModal = ref(false)
-
-function handlePaid() {
-  cart.clearCart()
-  router.push('/products')
-}
-</script>
-
 <template>
   <div class="max-w-4xl mx-auto px-4 py-10">
     <h1 class="text-3xl font-bold mb-6">Your Cart</h1>
@@ -50,8 +35,7 @@ function handlePaid() {
 
       <div class="mt-8 flex justify-between items-center border-t pt-4">
         <p class="text-xl font-bold">Total: ${{ cart.total.toFixed(2) }}</p>
-        <button
-          @click="showModal = true"
+        <button @click="router.push('/checkout')"
           class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded"
         >
           Checkout
@@ -60,10 +44,20 @@ function handlePaid() {
     </div>
   </div>
 
-  <DcartCheckoutModal
-    v-if="showModal"
-    :total="cart.total"
-    @close="showModal = false"
-    @paid="handlePaid"
-  />
+
 </template>
+
+
+<script setup>
+import { useCartStore } from '@/stores/cart'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+const cart = useCartStore()
+const router = useRouter()
+
+function handlePaid() {
+  cart.clearCart()
+  router.push('/products')
+}
+</script>
