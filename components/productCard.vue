@@ -20,7 +20,7 @@
      
      <div class="flex justify-between items-center">
          <p class="text-green-400">Rating - {{ product.rating.rate }}</p>
-         <NuxtLink :to="`/products/${product.id}`" class="bg-green-400 rounded-md text-white p-2">View Details</NuxtLink>
+         <NuxtLink :to="`/products/${product.id}`" class="bg-green-400 rounded-lg text-white p-1 md:p-2">View Details</NuxtLink>
     </div>
     
   </div>

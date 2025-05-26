@@ -20,14 +20,14 @@
         <div class="flex items-center gap-4">
           <img :src="item.image" alt="" class="w-16 h-16 object-contain" />
           <div>
-            <h2 class="font-semibold">{{ item.title }}</h2>
+            <h2 class="font-semibold text-[10px] md:text-sm lg:text-lg">{{ item.title }}</h2>
             <p class="text-sm text-gray-600">Qty: {{ item.quantity }}</p>
           </div>
         </div>
 
         <div class="text-right">
           <p class="text-green-600 font-bold">${{ (item.price * item.quantity).toFixed(2) }}</p>
-          <button @click="cart.removeItem(item.id)" class="text-red-500 text-sm mt-1 hover:underline">
+          <button @click="cart.removeItem(item.id)" class="text-red-500 text-[10px] md:text-sm mt-1 hover:underline">
             Remove
           </button>
         </div>

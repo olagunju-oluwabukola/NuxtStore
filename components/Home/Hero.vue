@@ -6,8 +6,8 @@
         <p class="uppercase text-green-600 tracking-wide font-semibold text-sm md:text-base">
           Welcome to Nuxt Store
         </p>
-        <h1 class="text-3xl
-         md:text-6xl font-extrabold text-green-800 leading-tight">
+        <h1 class="text-4xl
+         md:text-5xl lg:text-6xl font-extrabold text-green-800 leading-tight">
           Are you ready to <br />
           <span class="text-green-600">lead the way</span>?
         </h1>
@@ -16,7 +16,7 @@
         mt-6 md:mt-0
         md:text-base  md:leading-relaxed font-medium  max-w-xl ">
 
-          Discover affordable, modern, and quality items — designed to elevate your lifestyle.
+          Discover affordable, modern, and quality items designed to elevate your lifestyle.
         </p>
   
         <NuxtLink

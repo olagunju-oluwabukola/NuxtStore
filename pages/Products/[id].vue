@@ -68,8 +68,8 @@ function addToCart() {
 
     <!-- Product Info -->
     <div class="space-y-6">
-      <h1 class="text-3xl font-bold text-gray-800">{{ product.title }}</h1>
-      <p class="text-lg text-gray-700">{{ product.description }}</p>
+      <h1 class="text-2xl md:text-3xl lg:text-3xl font-bold text-gray-800">{{ product.title }}</h1>
+      <p class="text-sm md:text-lg text-gray-700">{{ product.description }}</p>
       <p class="text-sm text-gray-500">Product ID: {{ product.id }}</p>
 
       <!-- Price & Quantity -->
@@ -93,7 +93,7 @@ function addToCart() {
 
       <button
         @click="addToCart"
-        class="bg-green-400 cursor-pointer text-white px-6 py-3 rounded-lg transition"
+        class="bg-green-400 cursor-pointer text-white px-6 py-2 md:py-3 rounded-lg transition"
       >
         Add to Cart 
       </button>

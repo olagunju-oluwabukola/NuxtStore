@@ -1,7 +1,7 @@
 <template>
     
   <footer class=" text-dark px-6 py-10">
-    <div class=" mx-auto md:mx-10 grid grid-cols-1 md:grid-cols-4 gap-8">
+    <div class=" mx-auto md:mx-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
       
       <div>
         <h2 class="text-lg md:text-3xl lg:text-4xl font-semibold mt-0 md:mt-8 text-green-400">NUXTSTORE</h2>

@@ -210,7 +210,7 @@ const printReceipt = () => {
 
     
     <div v-else-if="paymentDone && receiptData" class="text-center space-y-8">
-      <div class="text-green-600 text-3xl font-bold animate-pulse">🎉 Thank You for Your Purchase!</div>
+      <div class="text-green-600 text-3xl font-bold animate-pulse"> Thank You for Your Purchase!</div>
 
       <div id="receipt" class="bg-white shadow-lg rounded-lg p-6 text-left print:bg-white">
         <div class="flex items-center gap-4 mb-4">
@@ -302,23 +302,23 @@ const printReceipt = () => {
 
       <div v-else>
         <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 class="text-xl font-semibold mb-4">Order Summary</h2>
+          <h2 class="text-lg md:text-xl font-semibold mb-4">Order Summary</h2>
           <div v-for="item in cart.items" :key="item.id" class="flex justify-between py-3 border-b">
             <div class="flex items-center gap-4">
               <div class="w-16 h-16 bg-gray-100 rounded flex items-center justify-center">
                 <span class="text-gray-500 text-sm">Image</span>
               </div>
               <div>
-                <p class="font-medium">{{ item.title }}</p>
+                <p class="font-medium text-[10px] md:text-sm">{{ item.title }}</p>
                 <p class="text-sm text-gray-600">Qty: {{ item.quantity }}</p>
               </div>
             </div>
-            <p class="font-medium">${{ (item.price * item.quantity).toFixed(2) }}</p>
+            <p class="font-medium text-sm">${{ (item.price * item.quantity).toFixed(2) }}</p>
           </div>
 
-          <div class="mt-4 space-y-2">
-            <div class="flex justify-between">
-              <span class="text-gray-600">Subtotal</span>
+          <div class="mt-4 space-y-2 text-sm md:text-base">
+            <div class="flex justify-between text-sm md:text-base">
+              <span class="text-gray-600  ">Subtotal</span>
               <span>${{ cart.total.toFixed(2) }}</span>
             </div>
             <div class="flex justify-between">
@@ -339,7 +339,7 @@ const printReceipt = () => {
         <div class="bg-white rounded-lg shadow-md p-6">
           <h2 class="text-xl font-semibold mb-4">Payment Method</h2>
           
-          <div class="grid grid-cols-2 gap-4 mb-6">
+          <div class="grid grid-cols-2 gap-4 mb-6 text-sm md:text-base">
             <button 
               @click="selectedMethod = 'card'"
               :class="{'border-green-500 bg-green-50': selectedMethod === 'card'}"
@@ -460,7 +460,7 @@ const printReceipt = () => {
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
-              <span class="text-sm text-gray-500">Your payment details are encrypted and secure</span>
+              <span class="text-[9px] md:text-sm text-gray-500">Your payment details are encrypted and secure</span>
             </div>
           </div>
 
