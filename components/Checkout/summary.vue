@@ -1,100 +1,92 @@
 <script setup>
 import { useCartStore } from '@/stores/cart'
-import { ref, computed, reactive } from 'vue'
+import { ref, computed } from 'vue'
 
 const cart = useCartStore()
+const selectedMethod = ref('card')
 const isProcessing = ref(false)
 const paymentDone = ref(false)
 const receiptData = ref(null)
 const errorMessage = ref('')
 
-const payment = reactive({
-  selectedMethod: 'card',
-  card: {
-    number: '',
-    name: '',
-    expiryMonth: '',
-    expiryYear: '',
-    cvv: ''
-  },
-  paypal: {
-    email: ''
-  },
-  bank: {
-    account: '',
-    name: '',
-    type: 'current'
-  },
-  crypto: {
-    wallet: '',
-    type: 'bitcoin'
-  },
-  upi: {
-    id: ''
-  }
-})
+// Payment form inputs
+const cardNumber = ref('')
+const cardName = ref('')
+const expiryMonth = ref('')
+const expiryYear = ref('')
+const cvv = ref('')
+const paypalEmail = ref('')
+const bankAccount = ref('')
+const bankName = ref('')
+const bankRouting = ref('')
+const bankType = ref('checking')
+const cryptoWallet = ref('')
+const cryptoType = ref('bitcoin')
+const upiId = ref('')
 
+// Validation function
 function validatePaymentForm() {
   errorMessage.value = ''
 
-  if (payment.selectedMethod === 'card') {
-    if (!payment.card.number || !payment.card.name || !payment.card.expiryMonth || 
-        !payment.card.expiryYear || !payment.card.cvv) {
+  if (selectedMethod.value === 'card') {
+    if (!cardNumber.value || !cardName.value || !expiryMonth.value || !expiryYear.value || !cvv.value) {
       errorMessage.value = 'Please fill out all card details.'
       return false
     }
-    if (!/^\d{16}$/.test(payment.card.number.replace(/\s/g, ''))) {
+    if (!/^\d{16}$/.test(cardNumber.value.replace(/\s/g, ''))) {
       errorMessage.value = 'Card number must be 16 digits.'
       return false
     }
-    if (!/^\d{3,4}$/.test(payment.card.cvv)) {
+    if (!/^\d{3,4}$/.test(cvv.value)) {
       errorMessage.value = 'CVV must be 3 or 4 digits.'
       return false
     }
-    if (!/^\d{2}$/.test(payment.card.expiryMonth) || 
-        parseInt(payment.card.expiryMonth) > 12 || 
-        parseInt(payment.card.expiryMonth) < 1) {
+    if (!/^\d{2}$/.test(expiryMonth.value) || parseInt(expiryMonth.value) > 12 || parseInt(expiryMonth.value) < 1) {
       errorMessage.value = 'Please enter a valid month (01-12).'
       return false
     }
-    if (!/^\d{2}$/.test(payment.card.expiryYear)) {
+    if (!/^\d{2}$/.test(expiryYear.value)) {
       errorMessage.value = 'Please enter a valid 2-digit year.'
       return false
     }
   }
 
-  if (payment.selectedMethod === 'paypal') {
-    if (!payment.paypal.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payment.paypal.email)) {
+  if (selectedMethod.value === 'paypal') {
+    if (!paypalEmail.value || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(paypalEmail.value)) {
       errorMessage.value = 'Please enter a valid PayPal email.'
       return false
     }
   }
 
-  if (payment.selectedMethod === 'bank') {
-    if (!payment.bank.account || !payment.bank.name) {
+  if (selectedMethod.value === 'bank') {
+    if (!bankAccount.value || !bankName.value || !bankRouting.value) {
       errorMessage.value = 'Please provide all bank details.'
+      return false
+    }
+    if (!/^\d{9}$/.test(bankRouting.value)) {
+      errorMessage.value = 'Routing number must be 9 digits.'
       return false
     }
   }
 
-  if (payment.selectedMethod === 'crypto') {
-    if (!payment.crypto.wallet) {
+  if (selectedMethod.value === 'crypto') {
+    if (!cryptoWallet.value) {
       errorMessage.value = 'Please enter your crypto wallet address.'
       return false
     }
-  
-    if (payment.crypto.type === 'bitcoin' && !/^[13][a-km-zA-HJ-NP-Z1-9]{25,34}$/.test(payment.crypto.wallet)) {
+    // Basic validation for different crypto types
+    if (cryptoType.value === 'bitcoin' && !/^[13][a-km-zA-HJ-NP-Z1-9]{25,34}$/.test(cryptoWallet.value)) {
       errorMessage.value = 'Please enter a valid Bitcoin address.'
       return false
     }
-    if (payment.crypto.type === 'ethereum' && !/^0x[a-fA-F0-9]{40}$/.test(payment.crypto.wallet)) {
+    if (cryptoType.value === 'ethereum' && !/^0x[a-fA-F0-9]{40}$/.test(cryptoWallet.value)) {
       errorMessage.value = 'Please enter a valid Ethereum address.'
       return false
     }
   }
 
-  if (payment.selectedMethod === 'upi') {
-    if (!payment.upi.id || !/^[\w.-]+@[\w]+$/.test(payment.upi.id)) {
+  if (selectedMethod.value === 'upi') {
+    if (!upiId.value || !/^[\w.-]+@[\w]+$/.test(upiId.value)) {
       errorMessage.value = 'Please enter a valid UPI ID (e.g., name@bank).'
       return false
     }
@@ -103,9 +95,10 @@ function validatePaymentForm() {
   return true
 }
 
+// Format card number with spaces
 const formatCardNumber = () => {
-  if (payment.selectedMethod === 'card') {
-    const v = payment.card.number.replace(/\s+/g, '').replace(/[^0-9]/gi, '')
+  if (selectedMethod.value === 'card') {
+    const v = cardNumber.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '')
     const matches = v.match(/\d{4,16}/g)
     const match = matches && matches[0] || ''
     const parts = []
@@ -113,11 +106,12 @@ const formatCardNumber = () => {
       parts.push(match.substring(i, i + 4))
     }
     if (parts.length) {
-      payment.card.number = parts.join(' ')
+      cardNumber.value = parts.join(' ')
     }
   }
 }
 
+// Computed property for button disabled state
 const isPayDisabled = computed(() => {
   if (cart.items.length === 0) return true
   return !validatePaymentForm()
@@ -144,70 +138,18 @@ function handlePayment() {
 }
 
 const downloadPDF = async () => {
-  try {
-    const html2pdfModule = await import('html2pdf.js');
-    const html2pdf = html2pdfModule.default;
-    
-    const element = document.getElementById('receipt');
-    if (!element) {
-      throw new Error('Receipt element not found');
-    }
-    
+  if (process.client) {
+    const html2pdf = (await import('html2pdf.js')).default
+    const receipt = document.getElementById('receipt')
     const opt = {
       margin: 10,
       filename: `Nuxt_Store_Receipt_${receiptData.value.id}.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { 
-        scale: 2,
-        logging: true,
-        useCORS: true
-      },
-      jsPDF: { 
-        unit: 'mm', 
-        format: 'a4', 
-        orientation: 'portrait' 
-      }
-    };
-    
-    await html2pdf().set(opt).from(element).save();
-  } catch (error) {
-    console.error('Error generating PDF:', error);
-    alert('Failed to generate PDF. Please try again or use the print option.');
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    }
+    html2pdf().set(opt).from(receipt).save()
   }
-}
-
-const printReceipt = () => {
-  const printWindow = window.open('', '_blank');
-  if (!printWindow) {
-    alert('Popup was blocked. Please allow popups for this site.');
-    return;
-  }
-  
-  printWindow.document.write(`
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <title>Receipt #${receiptData.value.id}</title>
-        <style>
-          body { font-family: Arial, sans-serif; margin: 20px; }
-          .receipt-container { max-width: 600px; margin: 0 auto; }
-          /* Add all necessary styles here */
-        </style>
-      </head>
-      <body>
-        <div class="receipt-container">
-          ${document.getElementById('receipt').innerHTML}
-        </div>
-        <script>
-          setTimeout(() => {
-            window.print();
-            setTimeout(() => window.close(), 500);
-          }, 200);
-        <\/script>
-      </body>
-    </html>
-  `);
-  printWindow.document.close();
 }
 </script>
 
@@ -215,6 +157,7 @@ const printReceipt = () => {
   <div class="max-w-3xl mx-auto px-4 py-10 font-sans">
     <h1 class="text-3xl font-bold mb-6">Checkout</h1>
 
+    <!-- Spinner -->
     <div v-if="isProcessing" class="flex flex-col items-center justify-center h-64 text-center">
       <svg class="animate-spin h-10 w-10 text-green-600 mb-4" viewBox="0 0 24 24">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
@@ -223,7 +166,7 @@ const printReceipt = () => {
       <p class="text-gray-600 text-lg">Processing your payment...</p>
     </div>
 
-    
+    <!-- Thank you + Receipt -->
     <div v-else-if="paymentDone && receiptData" class="text-center space-y-8">
       <div class="text-green-600 text-3xl font-bold animate-pulse"> Thank You for Your Purchase!</div>
 
@@ -289,7 +232,7 @@ const printReceipt = () => {
       </div>
 
       <div class="flex justify-center gap-4">
-        <button @click="printReceipt" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2">
+        <button @click="window.print()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
           </svg>
@@ -304,6 +247,7 @@ const printReceipt = () => {
       </div>
     </div>
 
+    <!-- Checkout Form -->
     <div v-else>
       <div v-if="cart.items.length === 0" class="text-center py-10">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -317,23 +261,23 @@ const printReceipt = () => {
 
       <div v-else>
         <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 class="text-lg md:text-xl font-semibold mb-4">Order Summary</h2>
+          <h2 class="text-xl font-semibold mb-4">Order Summary</h2>
           <div v-for="item in cart.items" :key="item.id" class="flex justify-between py-3 border-b">
             <div class="flex items-center gap-4">
               <div class="w-16 h-16 bg-gray-100 rounded flex items-center justify-center">
                 <span class="text-gray-500 text-sm">Image</span>
               </div>
               <div>
-                <p class="font-medium text-[10px] md:text-sm">{{ item.title }}</p>
+                <p class="font-medium">{{ item.title }}</p>
                 <p class="text-sm text-gray-600">Qty: {{ item.quantity }}</p>
               </div>
             </div>
-            <p class="font-medium text-sm">${{ (item.price * item.quantity).toFixed(2) }}</p>
+            <p class="font-medium">${{ (item.price * item.quantity).toFixed(2) }}</p>
           </div>
 
-          <div class="mt-4 space-y-2 text-sm md:text-base">
-            <div class="flex justify-between text-sm md:text-base">
-              <span class="text-gray-600  ">Subtotal</span>
+          <div class="mt-4 space-y-2">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Subtotal</span>
               <span>${{ cart.total.toFixed(2) }}</span>
             </div>
             <div class="flex justify-between">
@@ -354,84 +298,53 @@ const printReceipt = () => {
         <div class="bg-white rounded-lg shadow-md p-6">
           <h2 class="text-xl font-semibold mb-4">Payment Method</h2>
           
-          <div class="grid grid-cols-2 gap-4 mb-6 text-sm md:text-base">
-           
-<button 
-  @click="payment.selectedMethod = 'card'"
-  :class="{'border-green-500 bg-green-50': payment.selectedMethod === 'card'}"
->
-  <!-- ... -->
-</button>
-
-<div v-if="payment.selectedMethod === 'card'" class="space-y-4">
-  <div>
-    <label class="block text-sm font-medium text-gray-700 mb-1">Card Number</label>
-    <input 
-      v-model="payment.card.number" 
-      @input="formatCardNumber"
-      type="text" 
-      placeholder="1234 5678 9012 3456" 
-      class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-green-500 focus:border-green-500" 
-      maxlength="19"
-    />
-  </div>
-  
-  <div>
-    <label class="block text-sm font-medium text-gray-700 mb-1">Name on Card</label>
-    <input 
-      v-model="payment.card.name" 
-      type="text" 
-      placeholder="John Smith" 
-      class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-green-500 focus:border-green-500" 
-    />
-  </div>
-  
-  <div class="grid grid-cols-2 gap-4">
-    <div>
-      <label class="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
-      <div class="flex gap-2">
-        <input 
-          v-model="payment.card.expiryMonth" 
-          type="text" 
-          placeholder="MM" 
-          class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-green-500 focus:border-green-500" 
-          maxlength="2"
-        />
-        <input 
-          v-model="payment.card.expiryYear" 
-          type="text" 
-          placeholder="YY" 
-          class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-green-500 focus:border-green-500" 
-          maxlength="2"
-        />
-      </div>
-    </div>
-    
-    <div>
-      <label class="block text-sm font-medium text-gray-700 mb-1">CVV</label>
-      <input 
-        v-model="payment.card.cvv" 
-        type="text" 
-        placeholder="123" 
-        class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-green-500 focus:border-green-500" 
-        maxlength="4"
-      />
-    </div>
-  </div>
-</div>
-
-<div v-if="payment.selectedMethod === 'paypal'" class="space-y-4">
-  <input 
-    v-model="payment.paypal.email" 
-    type="email" 
-    placeholder="your@email.com" 
-    class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-green-500 focus:border-green-500" 
-  />
-</div>
-
+          <div class="grid grid-cols-2 gap-4 mb-6">
+            <button 
+              @click="selectedMethod = 'card'"
+              :class="{'border-green-500 bg-green-50': selectedMethod === 'card'}"
+              class="border rounded-lg p-4 text-center hover:border-green-500 transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mx-auto mb-2 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+              </svg>
+              <span>Credit/Debit Card</span>
+            </button>
+            
+            <button 
+              @click="selectedMethod = 'paypal'"
+              :class="{'border-green-500 bg-green-50': selectedMethod === 'paypal'}"
+              class="border rounded-lg p-4 text-center hover:border-green-500 transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mx-auto mb-2 text-blue-600" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20.067 8.478c.492.88.556 2.014.3 3.327-.74 3.806-3.276 5.12-6.514 5.12h-.5a.805.805 0 0 0-.794.68l-.04.22-.63 3.993-.032.17a.804.804 0 0 1-.794.679H7.72a.483.483 0 0 1-.477-.558L7.418 21h1.518l.95-6.02h1.385c4.678 0 7.75-2.203 8.796-6.502zm-2.96-5.09c.762.868.983 1.81.752 3.285-.019.123-.04.24-.062.36-.735 3.773-3.089 5.446-6.956 5.446H8.957c-.63 0-1.174.414-1.354 1.002l-.014-.002-.93 5.894H3.121a.051.051 0 0 1-.05-.06l2.598-16.51A.95.95 0 0 1 6.607 2h5.976c2.183 0 3.716.469 4.523 1.388z"/>
+              </svg>
+              <span>PayPal</span>
+            </button>
+            
+            <button 
+              @click="selectedMethod = 'bank'"
+              :class="{'border-green-500 bg-green-50': selectedMethod === 'bank'}"
+              class="border rounded-lg p-4 text-center hover:border-green-500 transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mx-auto mb-2 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
+              </svg>
+              <span>Bank Transfer</span>
+            </button>
+            
+            <button 
+              @click="selectedMethod = 'crypto'"
+              :class="{'border-green-500 bg-green-50': selectedMethod === 'crypto'}"
+              class="border rounded-lg p-4 text-center hover:border-green-500 transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mx-auto mb-2 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>Crypto</span>
+            </button>
           </div>
 
-        
+          <!-- Error Message -->
           <div v-if="errorMessage" class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
             <div class="flex">
               <div class="flex-shrink-0">
@@ -445,7 +358,7 @@ const printReceipt = () => {
             </div>
           </div>
 
-         
+          <!-- Card Payment -->
           <div v-if="selectedMethod === 'card'" class="space-y-4">
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Card Number</label>
@@ -506,11 +419,11 @@ const printReceipt = () => {
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
-              <span class="text-[9px] md:text-sm text-gray-500">Your payment details are encrypted and secure</span>
+              <span class="text-sm text-gray-500">Your payment details are encrypted and secure</span>
             </div>
           </div>
 
-
+          <!-- PayPal Payment -->
           <div v-if="selectedMethod === 'paypal'" class="space-y-4">
             <div class="bg-blue-50 p-4 rounded-lg mb-4">
               <p class="text-sm text-blue-800">You will be redirected to PayPal to complete your payment securely.</p>
@@ -527,13 +440,14 @@ const printReceipt = () => {
             </div>
           </div>
 
+          <!-- Bank Transfer -->
           <div v-if="selectedMethod === 'bank'" class="space-y-4">
             <div class="bg-gray-50 p-4 rounded-lg mb-4">
               <p class="text-sm text-gray-800">Please transfer the exact amount to our bank account. Your order will be processed after we receive the payment.</p>
             </div>
             
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1"> Account Number</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Bank Account Number</label>
               <input 
                 v-model="bankAccount" 
                 type="text" 
@@ -543,7 +457,7 @@ const printReceipt = () => {
             </div>
             
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Account Name</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Account Holder Name</label>
               <input 
                 v-model="bankName" 
                 type="text" 
@@ -552,6 +466,16 @@ const printReceipt = () => {
               />
             </div>
             
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Routing Number</label>
+              <input 
+                v-model="bankRouting" 
+                type="text" 
+                placeholder="123456789" 
+                class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-green-500 focus:border-green-500" 
+                maxlength="9"
+              />
+            </div>
             
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Account Type</label>
@@ -559,12 +483,13 @@ const printReceipt = () => {
                 v-model="bankType" 
                 class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-green-500 focus:border-green-500"
               >
-                <option value="checking">Current</option>
+                <option value="checking">Checking</option>
                 <option value="savings">Savings</option>
               </select>
             </div>
           </div>
 
+          <!-- Crypto Payment -->
           <div v-if="selectedMethod === 'crypto'" class="space-y-4">
             <div class="bg-yellow-50 p-4 rounded-lg mb-4">
               <p class="text-sm text-yellow-800">Send the exact amount in cryptocurrency to the wallet address provided after checkout.</p>
@@ -594,7 +519,7 @@ const printReceipt = () => {
             </div>
           </div>
 
-        
+          <!-- UPI Payment -->
           <div v-if="selectedMethod === 'upi'" class="space-y-4">
             <div class="bg-purple-50 p-4 rounded-lg mb-4">
               <p class="text-sm text-purple-800">Enter your UPI ID to complete the payment.</p>
@@ -620,7 +545,9 @@ const printReceipt = () => {
             }"
             class="w-full text-white px-6 py-3 rounded-lg transition-colors mt-6 flex items-center justify-center gap-2"
           >
-            
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
             Pay ${{ cart.total.toFixed(2) }} Now
           </button>
         </div>
@@ -628,5 +555,3 @@ const printReceipt = () => {
     </div>
   </div>
 </template>
-
-
