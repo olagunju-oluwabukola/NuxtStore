@@ -39,7 +39,7 @@ const categories = ref([
     title: 'Accessories',
     slug: 'accessories',
     imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrLRR-KvGmbFLtjQ4Gx8tsBhFNtYLb8LD6gw&s',
-    buttonText: 'View All'
+    buttonText: 'Accessories'
   }
 ])
 
